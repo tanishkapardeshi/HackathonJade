@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered SDLC Efficiency Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header {
+            text-align: center; color: white; margin-bottom: 30px; padding: 20px;
+            background: rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(10px);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .main-content {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px; margin-bottom: 30px;
+        }
+        .module {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .module::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .module:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        .module h2 {
+            color: #333; margin-bottom: 20px; font-size: 1.5em;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .module-icon {
+            width: 30px; height: 30px; background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold;
+        }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        textarea, input, select {
+            width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;
+            font-size: 14px; transition: border-color 0.3s ease; resize: vertical; min-height: 120px;
+        }
+        input, select { min-height: 45px; }
+        textarea:focus, input:focus, select:focus {
+            outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white; border: none; padding: 15px 25px; border-radius: 10px;
+            cursor: pointer; font-size: 16px; font-weight: 600;
+            transition: all 0.3s ease; width: 100%; margin-top: 10px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .output {
+            margin-top: 20px; padding: 20px; background: #f8f9fa;
+            border-radius: 10px; border-left: 4px solid #667eea;
+            white-space: pre-wrap; max-height: 400px; overflow-y: auto; display: none;
+        }
+        .output.show { display: block; animation: slideIn 0.3s ease; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading { display: none; text-align: center; padding: 20px; color: #fbbf24; font-weight: 600; }
+        .loading.show { display: block; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .stats {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center;
+        }
+        .stats h2 { color: #333; margin-bottom: 20px; }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        .stat-item {
+            padding: 20px; background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white; border-radius: 15px;
+        }
+        .stat-item h3 { font-size: 2em; margin-bottom: 5px; }
+        .stat-item p { opacity: 0.9; }
+        .code-output {
+            background: #1e1e1e; color: #d4d4d4; padding: 20px;
+            border-radius: 10px; font-family: 'Courier New', monospace;
+            margin-top: 10px; max-height: 400px; overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 DevFlow AI</h1>
+            <p>Streamline your Software Development Lifecycle with AI-powered automation</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Requirements Analysis Module -->
+            <div class="module">
+                <h2><div class="module-icon">📋</div>Requirements Analysis</h2>
+                <div class="input-group">
+                    <label for="requirements">Business Requirements:</label>
+                    <textarea id="requirements" placeholder="Enter your business requirements here..."></textarea>
+                </div>
+                <button class="btn" onclick="analyzeRequirements()">Generate User Stories</button>
+                <div class="loading" id="reqLoading"><div class="spinner"></div><p>Analyzing...</p></div>
+                <div class="output" id="reqOutput"></div>
+            </div>
+
+            <!-- Code Quality Module -->
+            <div class="module">
+                <h2><div class="module-icon">💻</div>Code Quality Assistant</h2>
+                <div class="input-group">
+                    <label for="codeLanguage">Programming Language:</label>
+                    <select id="codeLanguage">
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="typescript">TypeScript</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="codeInput">Your Code:</label>
+                    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+                </div>
+                <button class="btn" onclick="analyzeCode()">Analyze & Improve Code</button>
+                <div class="loading" id="codeLoading"><div class="spinner"></div><p>Analyzing...</p></div>
+                <div class="output" id="codeOutput"></div>
+            </div>
+
+            <!-- Testing Module -->
+            <div class="module">
+                <h2><div class="module-icon">🧪</div>Test Case Generator</h2>
+                <div class="input-group">
+                    <label for="testFeature">Feature/Function to Test:</label>
+                    <textarea id="testFeature" placeholder="Describe the feature to test..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="testType">Test Type:</label>
+                    <select id="testType">
+                        <option value="unit">Unit Tests</option>
+                        <option value="integration">Integration Tests</option>
+                        <option value="functional">Functional Tests</option>
+                        <option value="ui">UI/E2E Tests</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="generateTests()">Generate Test Cases</button>
+                <div class="loading" id="testLoading"><div class="spinner"></div><p>Generating...</p></div>
+                <div class="output" id="testOutput"></div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <h2>📊 Efficiency Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-item"><h3>85%</h3><p>Time Saved on Requirements Analysis</p></div>
+                <div class="stat-item"><h3>70%</h3><p>Faster Code Reviews</p></div>
+                <div class="stat-item"><h3>90%</h3><p>Test Case Coverage Improvement</p></div>
+                <div class="stat-item"><h3>60%</h3><p>Overall SDLC Acceleration</p></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend endpoint
+        const backendUrl = "http://localhost:5000/api/chat";
+
+        async function callOpenAI(prompt, systemMessage = '') {
+            try {
+                const response = await fetch(backendUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: "system", content: systemMessage || "You are a helpful SDLC assistant." },
+                            { role: "user", content: prompt }
+                        ],
+                        max_tokens: 2000
+                    })
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error("Backend Error:", error);
+                return `Error: ${error.message}`;
+            }
+        }
+
+        async function analyzeRequirements() {
+            const requirements = document.getElementById('requirements').value;
+            const loading = document.getElementById('reqLoading');
+            const output = document.getElementById('reqOutput');
+            if (!requirements.trim()) { alert('Enter requirements'); return; }
+            loading.classList.add('show'); output.classList.remove('show');
+            const systemMessage = "You are an expert Business Analyst. Convert requirements into structured user stories with acceptance criteria.";
+            const prompt = `Analyze and create user stories:\n\n${requirements}`;
+            const result = await callOpenAI(prompt, systemMessage);
+            loading.classList.remove('show');
+            if (result) { output.textContent = result; output.classList.add('show'); }
+        }
+
+        async function analyzeCode() {
+            const code = document.getElementById('codeInput').value;
+            const language = document.getElementById('codeLanguage').value;
+            const loading = document.getElementById('codeLoading');
+            const output = document.getElementById('codeOutput');
+            if (!code.trim()) { alert('Enter code'); return; }
+            loading.classList.add('show'); output.classList.remove('show');
+            const systemMessage = "You are a senior software engineer. Analyze code for quality, security, performance, and suggest improvements.";
+            const prompt = `Analyze this ${language} code:\n\n\`\`\`${language}\n${code}\n\`\`\``;
+            const result = await callOpenAI(prompt, systemMessage);
+            loading.classList.remove('show');
+            if (result) {
+                output.innerHTML = `<div class="code-output">${escapeHtml(result)}</div>`;
+                output.classList.add('show');
+            }
+        }
+
+        async function generateTests() {
+            const feature = document.getElementById('testFeature').value;
+            const testType = document.getElementById('testType').value;
+            const loading = document.getElementById('testLoading');
+            const output = document.getElementById('testOutput');
+            if (!feature.trim()) { alert('Enter feature to test'); return; }
+            loading.classList.add('show'); output.classList.remove('show');
+            const systemMessage = "You are a QA Engineer. Generate structured test cases with positive, negative, edge cases, and expected results.";
+            const prompt = `Generate ${testType} test cases for:\n\n${feature}`;
+            const result = await callOpenAI(prompt, systemMessage);
+            loading.classList.remove('show');
+            if (result) { output.textContent = result; output.classList.add('show'); }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
